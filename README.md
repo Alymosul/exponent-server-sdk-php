@@ -16,7 +16,7 @@ Server-side library for working with Expo push notifications using PHP
         $interestDetails = ['unique identifier', 'ExpoPushToken[unique]'];
         
         // Register the interest in the server
-        $expo->register($interestDetails[0], $interestDetails[1]);
+        $expo->registerInterest($interestDetails[0], $interestDetails[1]);
         
         // Build the notification data
         $notification = ['body' => 'Hello World!];
