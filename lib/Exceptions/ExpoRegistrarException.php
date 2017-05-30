@@ -33,4 +33,14 @@ class ExpoRegistrarException extends ExpoException
     {
         return new static('No interests found for this notification, make sure interests are already registered.', 404);
     }
+
+    /**
+     * Could not remove interest exception
+     *
+     * @return static
+     */
+    public static function couldNotRemoveInterest()
+    {
+        return new static('Could not remove interest, due to internal error.', 500);
+    }
 }
