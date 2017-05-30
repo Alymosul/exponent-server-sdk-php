@@ -46,7 +46,7 @@ class ExpoRegistrar
 
         return $token;
     }
-    
+
     /**
      * Removes token of a given interest
      *

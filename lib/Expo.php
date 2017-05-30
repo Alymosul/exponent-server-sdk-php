@@ -3,6 +3,7 @@
 namespace ExponentPhpSDK;
 
 use ExponentPhpSDK\Exceptions\ExpoException;
+use ExponentPhpSDK\Repositories\ExpoFileDriver;
 
 class Expo
 {
@@ -25,9 +26,25 @@ class Expo
      */
     private $registrar;
 
+    /**
+     * Expo constructor.
+     *
+     * @param ExpoRegistrar $expoRegistrar
+     */
     public function __construct(ExpoRegistrar $expoRegistrar)
     {
         $this->registrar = $expoRegistrar;
+    }
+
+    /**
+     * Creates an instance of this class with the normal setup
+     * It uses the ExpoFileDriver as the repository.
+     *
+     * @return Expo
+     */
+    public static function normalSetup()
+    {
+        return new self(new ExpoRegistrar(new ExpoFileDriver()));
     }
 
     /**
