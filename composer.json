@@ -1,0 +1,22 @@
+{
+    "name": "alymosul/exponent-server-sdk-php",
+    "description": "Server-side library for working with Expo push notifications using PHP",
+    "keywords": ["expo", "exponent", "push", "notifications"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aly Suleiman",
+            "email": "alymosul@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ExponentPhpSDK\\": "lib"
+        }
+    }
+}
+
