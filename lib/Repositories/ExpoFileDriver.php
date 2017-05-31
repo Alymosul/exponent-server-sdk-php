@@ -68,7 +68,12 @@ class ExpoFileDriver implements ExpoRepository
      */
     public function forget(string $key): bool
     {
-        $storageInstance = $this->getRepository();
+        $storageInstance = null;
+        try {
+            $storageInstance = $this->getRepository();
+        } catch (\Exception $e) {
+            return false;
+        }
 
         unset($storageInstance->{$key});
 
