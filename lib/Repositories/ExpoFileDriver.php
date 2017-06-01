@@ -116,6 +116,6 @@ class ExpoFileDriver implements ExpoRepository
         $file = fopen($this->storage, "w");
         fputs($file, '{}');
         fclose($file);
-        return json_decode($file);
+        return json_decode('{}');
     }
 }
