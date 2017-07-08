@@ -29,9 +29,7 @@ class ExpoFileDriver implements ExpoRepository
             $storageInstance = $this->getRepository();
         } catch (\Exception $e) {
             // Create the file, if it does not exist..
-            if ($e->getCode() === 0) {
-                $storageInstance = $this->createFile();
-            }
+            $storageInstance = $this->createFile();
         }
 
         $storageInstance->{$key} = $value;
