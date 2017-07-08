@@ -12,12 +12,11 @@ Server-side library for working with Expo push notifications using PHP
         
         $interestDetails = ['unique identifier', 'ExpoPushToken[unique]'];
         
-        // Register the interest in the server
-        $registrar = new \ExponentPhpSDK\ExpoRegistrar(new \ExponentPhpSDK\ExpoFileDriver()));
-        $registrar->registerInterest($interestDetails[0], $interestDetails[1]);
+        // You can quickly bootup an expo instance
+        $expo = \ExponentPhpSDK\Expo::normalSetup();
         
-        // You can quickly bootup an expo instance with the above registrar
-        $expo = new \ExponentPhpSDK\Expo($registrar);
+        // Subscribe the recipient to the server
+        $expo->subscribe($interestDetails[0], $interestDetails[1]);
         
         // Build the notification data
         $notification = ['body' => 'Hello World!];
