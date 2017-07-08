@@ -48,6 +48,31 @@ class Expo
     }
 
     /**
+     * Subscribes a given interest to the Expo Push Notifications.
+     *
+     * @param $interest
+     * @param $token
+     *
+     * @return string
+     */
+    public function subscribe($interest, $token)
+    {
+        return $this->registrar->registerInterest($interest, $token);
+    }
+
+    /**
+     * Unsubscribes a given interest from the Expo Push Notifications.
+     *
+     * @param $interest
+     *
+     * @return bool
+     */
+    public function unsubscribe($interest)
+    {
+        return $this->registrar->removeInterest($interest);
+    }
+
+    /**
      * Send a notification via the Expo Push Notifications Api.
      *
      * @param $interests
