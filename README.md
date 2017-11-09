@@ -26,7 +26,7 @@ Server-side library for working with Expo push notifications using PHP
         $notification = ['body' => 'Hello World!'];
         
         // Notify an interest with a notification
-        $expo->notify($interesDetails[0], $notification);
+        $expo->notify($interestDetails[0], $notification);
         
 # TODO
 - Need to create tests        
