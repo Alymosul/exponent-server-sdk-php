@@ -28,5 +28,11 @@ Server-side library for working with Expo push notifications using PHP
         // Notify an interest with a notification
         $expo->notify($interestDetails[0], $notification);
         
+Data can be added to notifications by providing it as a JSON object. For example
+
+
+        // Build the notification data
+        $notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
+
 # TODO
 - Need to create tests        
