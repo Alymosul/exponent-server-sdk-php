@@ -14,7 +14,7 @@ Server-side library for working with Expo push notifications using PHP
         
         require_once __DIR__.'/vendor/autoload.php';
         
-        $interestDetails = ['unique identifier', 'ExpoPushToken[unique]'];
+        $interestDetails = ['unique identifier', 'ExponentPushToken[unique]'];
         
         // You can quickly bootup an expo instance
         $expo = \ExponentPhpSDK\Expo::normalSetup();
