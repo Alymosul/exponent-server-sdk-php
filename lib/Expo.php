@@ -17,7 +17,7 @@ class Expo
      *
      * @var null|resource
      */
-    private $ch = null; // Curl handler
+    private $ch = null;
 
     /**
      * The registrar instance that manages the tokens
@@ -119,12 +119,12 @@ class Expo
     /**
      * Determines if the request we sent has failed completely
      *
-     * @param $response
+     * @param array $response
      * @param array $interests
      *
      * @return bool
      */
-    private function failedCompletely($response, array $interests)
+    private function failedCompletely(array $response, array $interests)
     {
         $numberOfInterests = count($interests);
         $numberOfFailures = 0;
