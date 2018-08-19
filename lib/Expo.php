@@ -147,15 +147,7 @@ class Expo
      */
     private function prepareCurl()
     {
-        // Create or reuse existing cURL handle
-        $this->ch = $this->ch?? curl_init();
-
-        // Throw exception if the cURL handle failed
-        if (!$this->ch) {
-            throw new ExpoException('Could not initialise cURL!');
-        }
-
-        $ch = $this->ch;
+        $ch = $this->getCurl();
 
         // Set cURL opts
         curl_setopt($ch, CURLOPT_URL, self::EXPO_API_URL);
@@ -167,6 +159,26 @@ class Expo
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         return $ch;
+    }
+
+    /**
+     * Get the cURL resource
+     *
+     * @throws ExpoException
+     *
+     * @return null|resource
+     */
+    public function getCurl()
+    {
+        // Create or reuse existing cURL handle
+        $this->ch = $this->ch ?? curl_init();
+
+        // Throw exception if the cURL handle failed
+        if (!$this->ch) {
+            throw new ExpoException('Could not initialise cURL!');
+        }
+
+        return $this->ch;
     }
 
     /**
