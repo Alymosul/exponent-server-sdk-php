@@ -88,7 +88,9 @@ class ExpoRegistrar
 
                 if(is_array($retrieved)) {
                     foreach($retrieved as $token) {
-                        $tokens[] = $token;
+                        if(is_string($token)) {
+                            $tokens[] = $token;
+                        }
                     }
                 }
             }
