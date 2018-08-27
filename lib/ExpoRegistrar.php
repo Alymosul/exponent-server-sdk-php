@@ -79,10 +79,18 @@ class ExpoRegistrar
         $tokens = [];
 
         foreach ($interests as $interest) {
-            $token = $this->repository->retrieve($interest);
+            $retrieved = $this->repository->retrieve($interest);
 
-            if (!is_null($token)) {
-                $tokens[] = $token;
+            if (!is_null($retrieved)) {
+                if(is_string($retrieved)) {
+                    $tokens[] = $retrieved;
+                }
+
+                if(is_array($retrieved)) {
+                    foreach($retrieved as $token) {
+                        $tokens[] = $token;
+                    }
+                }
             }
         }
 
