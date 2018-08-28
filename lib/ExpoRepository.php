@@ -18,7 +18,7 @@ interface ExpoRepository
      *
      * @param string $key
      *
-     * @return string|null
+     * @return array|string|null
      */
     public function retrieve(string $key);
 
