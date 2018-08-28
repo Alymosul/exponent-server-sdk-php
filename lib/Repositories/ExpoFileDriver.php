@@ -32,7 +32,23 @@ class ExpoFileDriver implements ExpoRepository
             $storageInstance = $this->createFile();
         }
 
-        $storageInstance->{$key} = $value;
+        // Check for existing tokens
+        if(isset($storageInstance->{$key}))
+        {
+            // If there is a single token, make it an array so we can push the additional tokens in it
+            if(!is_array($storageInstance->{$key}))
+            {
+                $storageInstance->{$key} = [$storageInstance->{$key}];
+            }
+
+            // Add new token to existing key
+            array_push($storageInstance->{$key}, $value);
+        }
+        else
+        {
+            // First token for this key
+            $storageInstance->{$key} = [$value];
+        }
 
         $file = $this->updateRepository($storageInstance);
 
@@ -44,7 +60,7 @@ class ExpoFileDriver implements ExpoRepository
      *
      * @param string $key
      *
-     * @return string|null
+     * @return array|string|null
      */
     public function retrieve(string $key)
     {
