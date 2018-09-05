@@ -64,12 +64,13 @@ class Expo
      * Unsubscribes a given interest from the Expo Push Notifications.
      *
      * @param $interest
+     * @param $token
      *
      * @return bool
      */
-    public function unsubscribe($interest)
+    public function unsubscribe($interest, $token = null)
     {
-        return $this->registrar->removeInterest($interest);
+        return $this->registrar->removeInterest($interest, $token);
     }
 
     /**

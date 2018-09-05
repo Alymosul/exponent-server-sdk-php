@@ -41,8 +41,12 @@ class ExpoFileDriver implements ExpoRepository
                 $storageInstance->{$key} = [$storageInstance->{$key}];
             }
 
-            // Add new token to existing key
-            array_push($storageInstance->{$key}, $value);
+            // Prevent duplicates
+            if(!array_search($value, $storageInstance->{$key}))
+            {
+                // Add new token to existing key
+                array_push($storageInstance->{$key}, $value);
+            }
         }
         else
         {
@@ -77,23 +81,58 @@ class ExpoFileDriver implements ExpoRepository
      * Removes an Expo token with a given identifier
      *
      * @param string $key
+     * @param string $value
      *
      * @return bool
      */
-    public function forget(string $key): bool
+    public function forget(string $key, string $value = null): bool
     {
         $storageInstance = null;
+
         try {
             $storageInstance = $this->getRepository();
         } catch (\Exception $e) {
             return false;
         }
 
-        unset($storageInstance->{$key});
+        // Delete a single token with this key and check if there are multiple tokens associated with this key
+        if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 1)
+        {
+            // Find our token in list of tokens
+            $index = array_search($value, $storageInstance->{$key});
 
-        $this->updateRepository($storageInstance);
+            if(isset($index) && isset($storageInstance->{$key}[$index]))
+            {
+                // Remove single token from list
+                unset($storageInstance->{$key}[$index]);
 
-        return !isset($storageInstance->{$key});
+                if(count($storageInstance->{$key}) === 0)
+                {
+                    // No more tokens left, remove key
+                    unset($storageInstance->{$key});
+                }
+                else
+                {
+                    // Reset array key after removing an key
+                    $storageInstance->{$key} = array_values($storageInstance->{$key});
+                }
+
+                $this->updateRepository($storageInstance);
+
+                return !array_search($value, $storageInstance->{$key});
+            }
+        }
+        else
+        {
+            // Delete all tokens with this key
+            unset($storageInstance->{$key});
+
+            $this->updateRepository($storageInstance);
+
+            return !isset($storageInstance->{$key});
+        }
+
+        return false;
     }
 
     /**

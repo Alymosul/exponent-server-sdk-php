@@ -51,14 +51,15 @@ class ExpoRegistrar
      * Removes token of a given interest
      *
      * @param $interest
+     * @param $token
      *
      * @throws ExpoRegistrarException
      *
      * @return bool
      */
-    public function removeInterest($interest)
+    public function removeInterest($interest, $token = null)
     {
-        if (!$this->repository->forget($interest)) {
+        if (!$this->repository->forget($interest, $token)) {
             throw ExpoRegistrarException::couldNotRemoveInterest();
         }
 
