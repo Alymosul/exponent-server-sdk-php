@@ -26,8 +26,9 @@ interface ExpoRepository
      * Removes an Expo token with a given identifier
      *
      * @param string $key
+     * @param string $value
      *
      * @return bool
      */
-    public function forget(string $key): bool;
+    public function forget(string $key, string $value = null): bool;
 }
