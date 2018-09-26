@@ -35,4 +35,7 @@ Data can be added to notifications by providing it as a JSON object. For example
         $notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
 
 # TODO
-- Need to create tests        
+- Need to create tests    
+
+# Laravel driver
+- There's an expo notifications driver built for laravel apps that's ready to use, you can find it here.. https://github.com/Alymosul/laravel-exponent-push-notifications
