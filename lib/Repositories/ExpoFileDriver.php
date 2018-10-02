@@ -33,23 +33,18 @@ class ExpoFileDriver implements ExpoRepository
         }
 
         // Check for existing tokens
-        if(isset($storageInstance->{$key}))
-        {
+        if (isset($storageInstance->{$key})) {
             // If there is a single token, make it an array so we can push the additional tokens in it
-            if(!is_array($storageInstance->{$key}))
-            {
+            if (!is_array($storageInstance->{$key})) {
                 $storageInstance->{$key} = [$storageInstance->{$key}];
             }
 
             // Prevent duplicates
-            if(!array_search($value, $storageInstance->{$key}))
-            {
+            if (!array_search($value, $storageInstance->{$key})) {
                 // Add new token to existing key
                 array_push($storageInstance->{$key}, $value);
             }
-        }
-        else
-        {
+        } else {
             // First token for this key
             $storageInstance->{$key} = [$value];
         }
@@ -101,18 +96,14 @@ class ExpoFileDriver implements ExpoRepository
             // Find our token in list of tokens
             $index = array_search($value, $storageInstance->{$key});
 
-            if(isset($index) && isset($storageInstance->{$key}[$index]))
-            {
+            if (isset($index) && isset($storageInstance->{$key}[$index])) {
                 // Remove single token from list
                 unset($storageInstance->{$key}[$index]);
 
-                if(count($storageInstance->{$key}) === 0)
-                {
+                if (count($storageInstance->{$key}) === 0) {
                     // No more tokens left, remove key
                     unset($storageInstance->{$key});
-                }
-                else
-                {
+                } else {
                     // Reset array key after removing an key
                     $storageInstance->{$key} = array_values($storageInstance->{$key});
                 }
@@ -121,9 +112,7 @@ class ExpoFileDriver implements ExpoRepository
 
                 return !array_search($value, $storageInstance->{$key});
             }
-        }
-        else
-        {
+        } else {
             // Delete all tokens with this key
             unset($storageInstance->{$key});
 
@@ -138,10 +127,16 @@ class ExpoFileDriver implements ExpoRepository
     /**
      * Gets the storage file contents and converts it into an object
      *
-     * @return mixed
+     * @return object
+     *
+     * @throws \Exception
      */
     private function getRepository()
     {
+        if (!file_exists($this->storage)) {
+            throw new \Exception('Tokens storage file not found.');
+        }
+
         $file = file_get_contents($this->storage);
         return json_decode($file);
     }
@@ -162,7 +157,7 @@ class ExpoFileDriver implements ExpoRepository
     /**
      * Creates the storage file
      *
-     * @return bool|string
+     * @return object
      */
     private function createFile()
     {
