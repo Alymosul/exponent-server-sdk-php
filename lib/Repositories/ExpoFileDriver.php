@@ -40,7 +40,7 @@ class ExpoFileDriver implements ExpoRepository
             }
 
             // Prevent duplicates
-            if (!array_search($value, $storageInstance->{$key})) {
+            if (!in_array($value, $storageInstance->{$key})) {
                 // Add new token to existing key
                 array_push($storageInstance->{$key}, $value);
             }
