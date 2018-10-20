@@ -98,23 +98,32 @@ class Expo
 
         // Gets the expo tokens for the interests
         $recipients = $this->registrar->getInterests($interests);
-
+		$dataBatches = []; // Expo API takes maximum of 100 notifications per request
         foreach ($recipients as $token) {
+			if(count($postData) >= 100){
+				$dataBatches[] = $postData;
+				$postData = [];
+			}
             $postData[] = $data + ['to' => $token];
         }
+		$dataBatches[] = $postData;
 
-        $ch = $this->prepareCurl();
+		$responses = [];
+		foreach($dataBatches as &$dataBatch){
+	        $ch = $this->prepareCurl();
+		    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($dataBatch));
+			$response = $this->executeCurl($ch);
+			
+			// If the notification failed completely, throw an exception with the details
+			if (!$debug && $this->failedCompletely($response, $interests)) {
+				throw ExpoException::failedCompletelyException($response);
+			}
+			
+			$responses[] = $response;
+		}
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
 
-        $response = $this->executeCurl($ch);
-
-        // If the notification failed completely, throw an exception with the details
-        if (!$debug && $this->failedCompletely($response, $interests)) {
-            throw ExpoException::failedCompletelyException($response);
-        }
-
-        return $response;
+        return $responses;
     }
 
     /**
