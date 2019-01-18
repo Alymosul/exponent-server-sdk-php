@@ -110,7 +110,7 @@ class ExpoFileDriver implements ExpoRepository
 
                 $this->updateRepository($storageInstance);
 
-                return !array_search($value, $storageInstance->{$key});
+                return !in_array($value, $storageInstance->{$key});
             }
         } else {
             // Delete all tokens with this key
