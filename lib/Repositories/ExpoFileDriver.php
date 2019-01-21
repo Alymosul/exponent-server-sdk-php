@@ -14,12 +14,13 @@ class ExpoFileDriver implements ExpoRepository
     private $storage = __DIR__.'/../../storage/tokens.json';
 
     /**
-     * Stores an Expo token with a given identifier
+     * Stores an Expo token into an array determined by the given identifier
+     * Duplicate entries are not stored.
+     * 
+     * @param $key identifier/key for interest's array of tokens
+     * @param $value token to be stored into the corresponding array
      *
-     * @param $key
-     * @param $value
-     *
-     * @return bool
+     * @return bool true if token was stored, false otherwise
      */
     public function store($key, $value): bool
     {
@@ -73,12 +74,14 @@ class ExpoFileDriver implements ExpoRepository
     }
 
     /**
-     * Removes an Expo token with a given identifier
+     * Removes an Expo token from array determined by the given identifier
+     * If last token for the given identifier is being removed,
+     * the key is removed from the store (i.e. the whole array).
      *
-     * @param string $key
-     * @param string $value
+     * @param $key identifier/key for interest's array of tokens
+     * @param $value token to be removed from the corresponding array
      *
-     * @return bool
+     * @return bool true if token was removed, false otherwise
      */
     public function forget(string $key, string $value = null): bool
     {
