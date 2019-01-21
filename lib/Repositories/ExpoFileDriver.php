@@ -17,8 +17,8 @@ class ExpoFileDriver implements ExpoRepository
      * Stores an Expo token into an array determined by the given identifier
      * Duplicate entries are not stored.
      * 
-     * @param $key identifier/key for interest's array of tokens
-     * @param $value token to be stored into the corresponding array
+     * @param string $key identifier/key for interest's array of tokens
+     * @param string $value token to be stored into the corresponding array
      *
      * @return bool true if token was stored, false otherwise
      */
@@ -78,8 +78,8 @@ class ExpoFileDriver implements ExpoRepository
      * If last token for the given identifier is being removed,
      * the key is removed from the store (i.e. the whole array).
      *
-     * @param $key identifier/key for interest's array of tokens
-     * @param $value token to be removed from the corresponding array
+     * @param string $key identifier/key for interest's array of tokens
+     * @param string $value token to be removed from the corresponding array
      *
      * @return bool true if token was removed, false otherwise
      */
