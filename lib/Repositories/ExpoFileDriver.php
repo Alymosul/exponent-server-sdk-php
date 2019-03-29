@@ -96,7 +96,7 @@ class ExpoFileDriver implements ExpoRepository
             // Find our token in list of tokens
             $index = array_search($value, $storageInstance->{$key});
 
-            if (isset($index) && isset($storageInstance->{$key}[$index])) {
+            if ($index !== false) {
                 // Remove single token from list
                 unset($storageInstance->{$key}[$index]);
 
