@@ -91,7 +91,7 @@ class ExpoFileDriver implements ExpoRepository
         }
 
         // Delete a single token with this key and check if there are multiple tokens associated with this key
-        if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 1)
+        if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 0)
         {
             // Find our token in list of tokens
             $index = array_search($value, $storageInstance->{$key});
