@@ -7,11 +7,20 @@ use ExponentPhpSDK\ExpoRepository;
 class ExpoFileDriver implements ExpoRepository
 {
     /**
-     * The file path for the file that will contain the registered tokens
-     *
-     * @var string
+     * Default file path where tokens will be stored
      */
-    private $storage = __DIR__.'/../../storage/tokens.json';
+    const DEFAULT_STORAGE = __DIR__ . '/../../storage/tokens.json';
+
+    /** @var string */
+    private $storage;
+
+    /**
+     * ExpoFileDriver constructor.
+     * @param string|null $customStoragePath Custom file path where tokens will be stored
+     */
+    public function __construct(string $customStoragePath = null) {
+        $this->storage = isset($customStoragePath) ? self::DEFAULT_STORAGE : $customStoragePath;
+    }
 
     /**
      * Stores an Expo token with a given identifier
