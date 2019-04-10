@@ -19,7 +19,7 @@ class ExpoFileDriver implements ExpoRepository
      * @param string|null $customStoragePath Custom file path where tokens will be stored
      */
     public function __construct(string $customStoragePath = null) {
-        $this->storage = isset($customStoragePath) ? self::DEFAULT_STORAGE : $customStoragePath;
+        $this->storage = isset($customStoragePath) ? $customStoragePath : self::DEFAULT_STORAGE;
     }
 
     /**
