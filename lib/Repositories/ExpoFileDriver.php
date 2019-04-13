@@ -170,10 +170,10 @@ class ExpoFileDriver implements ExpoRepository
     /**
      * Allows for custom token storage path
      *
-     * @param  string $path path to token storage json file
+     * @param  string $storage path to token storage json file
      * @return self
      */
-    public function setStorage(string $path): self
+    public function setStorage(string $storage): self
     {
         $this->storage = $storage;
         return $this;
