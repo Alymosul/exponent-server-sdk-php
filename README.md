@@ -14,7 +14,9 @@ Server-side library for working with Expo push notifications using PHP
         
         require_once __DIR__.'/vendor/autoload.php';
         
-        $interestDetails = ['unique identifier', 'ExponentPushToken[unique]'];
+        $channelName = 'greet';
+        
+        $interestDetails = [$channelName, 'ExponentPushToken[unique]'];
         
         // You can quickly bootup an expo instance
         $expo = \ExponentPhpSDK\Expo::normalSetup();
@@ -26,7 +28,7 @@ Server-side library for working with Expo push notifications using PHP
         $notification = ['body' => 'Hello World!'];
         
         // Notify an interest with a notification
-        $expo->notify($interestDetails[0], $notification);
+        $expo->notify($channelName, $notification);
         
 Data can be added to notifications by providing it as a JSON object. For example
 
