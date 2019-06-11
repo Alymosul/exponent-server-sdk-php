@@ -3,6 +3,7 @@
 namespace ExponentPhpSDK;
 
 use ExponentPhpSDK\Exceptions\ExpoException;
+use ExponentPhpSDK\Exceptions\UnexpectedResponseException;
 use ExponentPhpSDK\Repositories\ExpoFileDriver;
 
 class Expo
@@ -81,6 +82,7 @@ class Expo
      * @param bool $debug
      *
      * @throws ExpoException
+     * @throws UnexpectedResponseException
      *
      * @return array|bool
      */
@@ -187,6 +189,8 @@ class Expo
      *
      * @param $ch
      *
+     * @throws UnexpectedResponseException
+     *
      * @return array
      */
     private function executeCurl($ch)
@@ -196,6 +200,12 @@ class Expo
             'status_code' => curl_getinfo($ch, CURLINFO_HTTP_CODE)
         ];
 
-        return json_decode($response['body'], true)['data'];
+        $data = json_decode($response['body'], true)['data'];
+
+        if (!is_array($data)) {
+            throw new UnexpectedResponseException();
+        }
+
+        return $data;
     }
 }
