@@ -200,12 +200,12 @@ class Expo
             'status_code' => curl_getinfo($ch, CURLINFO_HTTP_CODE)
         ];
 
-        $data = json_decode($response['body'], true)['data'];
+        $responseData = json_decode($response['body'], true)['data'];
 
-        if (!is_array($data)) {
+        if (!is_array($responseData)) {
             throw new UnexpectedResponseException();
         }
 
-        return $data;
+        return $responseData;
     }
 }
