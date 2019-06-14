@@ -2,10 +2,22 @@
 
 namespace ExponentPhpSDK\Exceptions;
 
-class UnexpectedResponseException extends \Exception
+use \Exception;
+
+class UnexpectedResponseException extends Exception
 {
-    public function __construct()
-    {
-        parent::__construct('Unexpected response from server');
+    /**
+     * UnexpectedResponseException constructor.
+     *
+     * @param string $message
+     * @param int $code
+     * @param Throwable|null $previous
+     */
+    public function __construct(
+        $message = 'Unexpected response was received from Expo API.',
+        $code = 500,
+        Throwable $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
     }
 }
