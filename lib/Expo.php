@@ -202,7 +202,7 @@ class Expo
 
         $responseData = json_decode($response['body'], true)['data'];
 
-        if (!is_array($responseData)) {
+        if (! is_array($responseData)) {
             throw new UnexpectedResponseException();
         }
 
