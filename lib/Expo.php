@@ -79,14 +79,15 @@ class Expo
      *
      * @param $interests
      * @param array $data
+     * @param array $ssl_params
      * @param bool $debug
      *
+     * @return array|bool
+     * @throws Exceptions\ExpoRegistrarException
      * @throws ExpoException
      * @throws UnexpectedResponseException
-     *
-     * @return array|bool
      */
-    public function notify($interests, array $data, $debug = false)
+    public function notify($interests, array $data, array $ssl_params, $debug = false)
     {
         $postData = [];
 
@@ -105,7 +106,7 @@ class Expo
             $postData[] = $data + ['to' => $token];
         }
 
-        $ch = $this->prepareCurl();
+        $ch = $this->prepareCurl($ssl_params);
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
 
@@ -144,11 +145,11 @@ class Expo
     /**
      * Sets the request url and headers
      *
-     * @throws ExpoException
-     *
+     * @param array $ssl_params
      * @return null|resource
+     * @throws ExpoException
      */
-    private function prepareCurl()
+    private function prepareCurl(array $ssl_params)
     {
         $ch = $this->getCurl();
 
@@ -160,8 +161,8 @@ class Expo
         ]);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, (isset($ssl_params['CURLOPT_SSL_VERIFYHOST']) && $ssl_params['CURLOPT_SSL_VERIFYHOST'] == true) ? 2 : 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, (isset($ssl_params['CURLOPT_SSL_VERIFYPEER']) && $ssl_params['CURLOPT_SSL_VERIFYPEER'] == true) ? 2 : 0);
 
 
         return $ch;
@@ -205,7 +206,7 @@ class Expo
 
         $responseData = json_decode($response['body'], true)['data'] ?? null;
 
-        if (! is_array($responseData)) {
+        if (!is_array($responseData)) {
             throw new UnexpectedResponseException();
         }
 
