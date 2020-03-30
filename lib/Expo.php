@@ -90,7 +90,7 @@ class Expo
     {
         $postData = [];
 
-        if (is_string($interests)) {
+        if (is_string($interests) || is_int($interests)) {
             $interests = [$interests];
         }
 
