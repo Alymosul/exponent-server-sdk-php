@@ -77,7 +77,7 @@ class Expo
     /**
      * Send a notification via the Expo Push Notifications Api.
      *
-     * @param $interests
+     * @param array $interests
      * @param array $data
      * @param bool $debug
      *
@@ -86,13 +86,9 @@ class Expo
      *
      * @return array|bool
      */
-    public function notify($interests, array $data, $debug = false)
+    public function notify(array $interests, array $data, $debug = false)
     {
         $postData = [];
-
-        if (is_string($interests) || is_int($interests)) {
-            $interests = [$interests];
-        }
 
         if (count($interests) == 0) {
             throw new ExpoException('Interests array must not be empty.');
