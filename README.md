@@ -27,7 +27,7 @@ Server-side library for working with Expo push notifications using PHP
         $notification = ['body' => 'Hello World!'];
         
         // Notify an interest with a notification
-        $expo->notify($channelName, $notification);
+        $expo->notify([$channelName], $notification);
         
 Data can be added to notifications by providing it as a JSON object. For example
 
@@ -55,7 +55,7 @@ $expo->subscribe($channelName, $recipient);
 // …
 
 // Notify an interest with a notification, only one recipient will receive it
-$expo->notify($channelName, $notification);
+$expo->notify([$channelName], $notification);
 ```
 
 ## Several recipients
@@ -77,7 +77,7 @@ $expo->subscribe($channelName, $recipient2);
 // …
 
 // Notify an interest with a notification, the 2 recipients will receive it
-$expo->notify($channelName, $notification);
+$expo->notify([$channelName], $notification);
 ```
 
 # TODO
