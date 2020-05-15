@@ -7,12 +7,11 @@ Server-side library for working with Expo push notifications using PHP
 
 # Usage
 - Require the package in your project
-
-        composer require alymosul/exponent-server-sdk-php
-        
+```bash
+composer require alymosul/exponent-server-sdk-php
+```
 - In a php file
-    
-    ```php
+```php
     require_once __DIR__.'/vendor/autoload.php';
     
     $channelName = 'news';
@@ -29,11 +28,9 @@ Server-side library for working with Expo push notifications using PHP
     
     // Notify an interest with a notification
     $expo->notify([$channelName], $notification);
-    ```
-    
+ ```
 Data can be added to notifications by providing it as a JSON object. For example
-
-
+=======
 ```php
 // Build the notification data
 $notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
@@ -84,6 +81,10 @@ $expo->subscribe($channelName, $recipient2);
 $expo->notify([$channelName], $notification);
 ```
 
+```php
+// Build the notification data
+$notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
+```
 # TODO
 - Need to create tests    
 
