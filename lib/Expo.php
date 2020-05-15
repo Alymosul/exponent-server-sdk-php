@@ -108,7 +108,7 @@ class Expo
         $response = $this->executeCurl($ch);
 
         // If the notification failed completely, throw an exception with the details
-        if (!$debug && $this->failedCompletely($response, $recipients)) {
+        if ($debug && $this->failedCompletely($response, $recipients)) {
             throw ExpoException::failedCompletelyException($response);
         }
 
