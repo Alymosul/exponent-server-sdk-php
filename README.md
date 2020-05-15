@@ -29,8 +29,7 @@ composer require alymosul/exponent-server-sdk-php
     // Notify an interest with a notification
     $expo->notify([$channelName], $notification);
  ```
-Data can be added to notifications by providing it as a JSON object. For example
-=======
+Data can be added to notifications by providing it as a JSON object. For example:
 ```php
 // Build the notification data
 $notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
