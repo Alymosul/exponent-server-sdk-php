@@ -108,7 +108,7 @@ class Expo
         $response = $this->executeCurl($ch);
 
         // If the notification failed completely, throw an exception with the details
-        if (!$debug && $this->failedCompletely($response, $interests)) {
+        if ($debug && $this->failedCompletely($response, $recipients)) {
             throw ExpoException::failedCompletelyException($response);
         }
 
@@ -119,13 +119,13 @@ class Expo
      * Determines if the request we sent has failed completely
      *
      * @param array $response
-     * @param array $interests
+     * @param array $recipients
      *
      * @return bool
      */
-    private function failedCompletely(array $response, array $interests)
+    private function failedCompletely(array $response, array $recipients)
     {
-        $numberOfInterests = count($interests);
+        $numberOfRecipients = count($recipients);
         $numberOfFailures = 0;
 
         foreach ($response as $item) {
@@ -134,7 +134,7 @@ class Expo
             }
         }
 
-        return $numberOfFailures === $numberOfInterests;
+        return $numberOfFailures === $numberOfRecipients;
     }
 
     /**
