@@ -103,7 +103,7 @@ class Expo
 
         $ch = $this->prepareCurl();
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($this->convert_from_latin1_to_utf8_recursively($postData)));
 
         $response = $this->executeCurl($ch);
 
@@ -113,6 +113,37 @@ class Expo
         }
 
         return $response;
+    }
+    
+    /**
+     * @param $dat
+     *
+     * @return array|string
+     */
+    private  function convert_from_latin1_to_utf8_recursively($dat)
+    {
+        if (is_string($dat)) {
+            return utf8_encode($dat);
+        }
+
+        if (is_array($dat)) {
+            $ret = [];
+            foreach ($dat as $i => $d) {
+                $ret[$i] = $this->convert_from_latin1_to_utf8_recursively($d);
+            }
+
+            return $ret;
+        }
+
+        if (is_object($dat)) {
+            foreach ($dat as $i => $d) {
+                $dat->$i = $this->convert_from_latin1_to_utf8_recursively($d);
+            }
+
+            return $dat;
+        }
+
+        return $dat;
     }
 
     /**
