@@ -101,18 +101,23 @@ class Expo
             $postData[] = $data + ['to' => $token];
         }
 
-        $ch = $this->prepareCurl();
+        $postDataChunks = array_chunk($postData, 90);
+        $responses = [];
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+        foreach ($postDataChunks as $postDataChunk) {
+            $ch = $this->prepareCurl();
 
-        $response = $this->executeCurl($ch);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postDataChunk));
 
-        // If the notification failed completely, throw an exception with the details
-        if ($debug && $this->failedCompletely($response, $recipients)) {
-            throw ExpoException::failedCompletelyException($response);
+            $response = $this->executeCurl($ch);
+
+            // If the notification failed completely, throw an exception with the details
+            if ($debug && $this->failedCompletely($response, $recipients)) {
+                throw ExpoException::failedCompletelyException($response);
+            }
         }
 
-        return $response;
+        return $responses;
     }
 
     /**
