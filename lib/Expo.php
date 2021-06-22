@@ -82,7 +82,7 @@ class Expo
     /**
      * @param string|null $accessToken
      */
-    public function setAccessToken(?string $accessToken = null) {
+    public function setAccessToken(string $accessToken = null) {
         $this->accessToken = $accessToken;
     }
 
@@ -166,7 +166,7 @@ class Expo
         ];
 
         if ($this->accessToken) {
-            $headers []= sprintf('authorization: bearer %1$s', $this->accessToken);
+            $headers[] = sprintf('Authorization: Bearer %s', $this->accessToken);
         }
 
         // Set cURL opts
