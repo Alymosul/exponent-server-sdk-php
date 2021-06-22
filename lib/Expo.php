@@ -26,6 +26,11 @@ class Expo
      * @var ExpoRegistrar
      */
     private $registrar;
+    
+    /** 
+     * @var string|null
+     */
+    private $accessToken = null;
 
     /**
      * Expo constructor.
@@ -72,6 +77,13 @@ class Expo
     public function unsubscribe($interest, $token = null)
     {
         return $this->registrar->removeInterest($interest, $token);
+    }
+    
+    /**
+     * @param string|null $accessToken
+     */
+    public function setAccessToken(string $accessToken = null) {
+        $this->accessToken = $accessToken;
     }
 
     /**
@@ -148,12 +160,18 @@ class Expo
     {
         $ch = $this->getCurl();
 
+        $headers = [
+                'accept: application/json',
+                'content-type: application/json',
+        ];
+
+        if ($this->accessToken) {
+            $headers[] = sprintf('Authorization: Bearer %s', $this->accessToken);
+        }
+
         // Set cURL opts
         curl_setopt($ch, CURLOPT_URL, self::EXPO_API_URL);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'accept: application/json',
-            'content-type: application/json',
-        ]);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
