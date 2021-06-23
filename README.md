@@ -84,6 +84,27 @@ $expo->notify([$channelName], $notification);
 // Build the notification data
 $notification = ['body' => 'Hello World!', 'data'=> json_encode(array('someData' => 'goes here'))];
 ```
+
+# Additional security
+
+If you set up enhanced security in your Expo Dashboard (as described [here](https://docs.expo.io/push-notifications/sending-notifications/#additional-security)), you will need to attach an authorization token to each push request:
+
+```php
+    // ...
+    
+    // Bootup an expo instance
+    $expo = \ExponentPhpSDK\Expo::normalSetup();
+    
+    // Fetch your access token from where you stored it
+    $accessToken = 'your_expo_access_token';
+    
+    // The access token will be attached to every push request you make hereafter
+    $expo->setAccessToken($accessToken);
+    
+    // Notify an interest with a notification
+    $expo->notify([$channelName], $notification);
+ ```
+
 # TODO
 - Need to create tests    
 
