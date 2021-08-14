@@ -14,6 +14,11 @@ class Env {
 
     public function get($key)
     {
+        // Allows for a custom table name to store subscriptions.
+        if ($key === 'EXPO_TABLE') {
+            return $_ENV[$key] ?? 'expo_tokens';
+        }
+
         return $_ENV[$key];
     }
 

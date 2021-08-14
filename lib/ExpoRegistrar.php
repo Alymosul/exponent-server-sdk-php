@@ -1,12 +1,20 @@
 <?php
 namespace ExponentPhpSDK;
 
+use ExponentPhpSDK\Database\MysqlConnection;
 use ExponentPhpSDK\Exceptions\ExpoRegistrarException;
-use ExponentPhpSDK\Repositories\ExpoDatabaseDriver;
+use ExponentPhpSDK\Repositories\ExpoMysqlDriver;
 use ExponentPhpSDK\Repositories\ExpoFileDriver;
 
 class ExpoRegistrar
 {
+    /**
+     * The current registered driver.
+     *
+     * @var string
+     */
+    private $driver;
+
     /**
      * Repository that manages the storage and retrieval
      *
@@ -21,6 +29,7 @@ class ExpoRegistrar
      */
     public function __construct(string $driver)
     {
+        $this->driver = $driver;
         $this->repository = $this->getRepository($driver);
     }
 
@@ -114,16 +123,6 @@ class ExpoRegistrar
         return $tokens;
     }
 
-    private function getRepository(string $driver)
-    {
-        switch ($driver) {
-            case 'file':
-                return new ExpoFileDriver();
-            case 'database':
-                return new ExpoDatabaseDriver();
-        }
-    }
-
     /**
      * Determines if a token is a valid Expo push token
      *
@@ -134,5 +133,20 @@ class ExpoRegistrar
     private function isValidExpoPushToken(string $token)
     {
         return  substr($token, 0, 18) ===  "ExponentPushToken[" && substr($token, -1) === ']';
+    }
+
+    private function getRepository(string $driver)
+    {
+        switch ($driver) {
+            case 'file':
+                return new ExpoFileDriver();
+            case 'mysql':
+                return new ExpoMysqlDriver(new MysqlConnection());
+        }
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
     }
 }

@@ -1,3 +1,5 @@
 .idea
 .phpunit.*
 /vendor/
+.env
+.env.testing

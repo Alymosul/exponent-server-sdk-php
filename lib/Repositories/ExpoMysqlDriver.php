@@ -7,7 +7,7 @@ use ExponentPhpSDK\Env;
 use ExponentPhpSDK\Exceptions\ExpoException;
 use ExponentPhpSDK\ExpoRepository;
 
-class ExpoDatabaseDriver implements ExpoRepository
+class ExpoMysqlDriver implements ExpoRepository
 {
     private $env;
     private $conn;
@@ -16,6 +16,68 @@ class ExpoDatabaseDriver implements ExpoRepository
     {
         $this->env = new Env();
         $this->conn = $connection->connect();
+    }
+
+    /**
+     * @param string $channel
+     * @param string $token
+     */
+    public function store($channel, $token): bool
+    {
+        if (! $this->channelExists($channel)) {
+            $this->createChannel($channel);
+        }
+
+        $recipients = $this->getRecipients($channel);
+
+        // prevents duplicate subscriptions to the same channel
+        if (! in_array($token, $recipients)) {
+            array_push($recipients, $token);
+        }
+
+        return $this->updateSubscriptions(
+            $channel,
+            $recipients
+        );
+    }
+
+    /**
+     * @return array|null
+     */
+    public function retrieve(string $channel)
+    {
+        $recipients = $this->getRecipients($channel);
+
+        return count($recipients)
+            ? $recipients
+            : null;
+    }
+
+    public function forget(string $channel, string $token = null): bool
+    {
+        if (! $this->channelExists($channel)) {
+            return true;
+        }
+
+        if (! $token && count($this->getRecipients($channel)) === 0) {
+            return $this->deleteChannel($channel);
+        }
+
+        $recipients = $this->getRecipients($channel);
+
+        if (! in_array($token, $recipients)) {
+            return false;
+        }
+
+        // @todo Can use array_search and unset once we prevent duplicate subscriptions to the same channel.
+        $filteredRecipients = array_filter($recipients, function($item) use ($token) {
+            return $item !== $token;
+        });
+
+        // If there are no more subscribers delete the channel, otherwise update.
+        return count($filteredRecipients)
+            ? $this->updateSubscriptions($channel, array_values($filteredRecipients))
+            : $this->deleteChannel($channel);
     }
 
     private function channelExists(string $channel)
@@ -87,67 +149,5 @@ class ExpoDatabaseDriver implements ExpoRepository
             ->executeStatement();
 
         return true;
-    }
-
-    /**
-     * @param string $channel
-     * @param string $token
-     */
-    public function store($channel, $token): bool
-    {
-        if (! $this->channelExists($channel)) {
-            $this->createChannel($channel);
-        }
-
-        $recipients = $this->getRecipients($channel);
-
-        // prevents duplicate subscriptions to the same channel
-        if (! in_array($token, $recipients)) {
-            array_push($recipients, $token);
-        }
-
-        return $this->updateSubscriptions(
-            $channel,
-            $recipients
-        );
-    }
-
-    /**
-     * @return array|null
-     */
-    public function retrieve(string $channel)
-    {
-        $recipients = $this->getRecipients($channel);
-
-        return count($recipients)
-            ? $recipients
-            : null;
-    }
-
-    public function forget(string $channel, string $token = null): bool
-    {
-        if (! $this->channelExists($channel)) {
-            return true;
-        }
-
-        if (! $token && count($this->getRecipients($channel)) === 0) {
-            return $this->deleteChannel($channel);
-        }
-
-        $recipients = $this->getRecipients($channel);
-
-        if (! in_array($token, $recipients)) {
-            return false;
-        }
-
-        // @todo Can use array_search and unset once we prevent duplicate subscriptions to the same channel.
-        $filteredRecipients = array_filter($recipients, function($item) use ($token) {
-            return $item !== $token;
-        });
-
-        // If there are no more subscribers delete the channel, otherwise update.
-        return count($filteredRecipients)
-            ? $this->updateSubscriptions($channel, array_values($filteredRecipients))
-            : $this->deleteChannel($channel);
     }
 }

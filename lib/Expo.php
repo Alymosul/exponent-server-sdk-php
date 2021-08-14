@@ -50,11 +50,19 @@ class Expo
      */
     public static function driver(string $driver)
     {
-        if (! in_array($driver, ['file', 'database'])) {
+        if (! in_array($driver, ['file', 'mysql'])) {
             throw new ExpoException('Invalid storage driver');
         }
 
         return new self(new ExpoRegistrar($driver));
+    }
+
+    /**
+     * Get the string representation of the current driver.
+     */
+    public function getDriver(): string
+    {
+        return $this->registrar->getDriver();
     }
 
     /**

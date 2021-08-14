@@ -4,8 +4,16 @@ namespace ExponentPhpSDK\Database;
 
 use Doctrine\DBAL\DriverManager;
 use ExponentPhpSDK\Database\Connection;
+use ExponentPhpSDK\Env;
 
 class MysqlConnection implements Connection {
+
+    /**
+     * Environment variables.
+     *
+     * @var Env
+     */
+    public $env;
 
     /**
      * The database connection.
@@ -13,6 +21,11 @@ class MysqlConnection implements Connection {
      * @var \Doctrine\DBAL\Driver\Connection|null
      */
     public $conn = null;
+
+    public function __construct()
+    {
+        $this->env = new Env();
+    }
 
     /**
      * Establishes a database connection.
@@ -41,6 +54,16 @@ class MysqlConnection implements Connection {
     }
 
     /**
+     * Returns a database query builder.
+     *
+     * @return \Doctrine\DBAL\Query\QueryBuilder;
+     */
+    public function getQuery()
+    {
+        return $this->conn->createQueryBuilder();
+    }
+
+    /**
      * Get the database credentials.
      *
      * @return array
@@ -55,15 +78,5 @@ class MysqlConnection implements Connection {
             'port' => $this->env->get('DB_PORT'),
             'driver' => 'pdo_mysql',
         ];
-    }
-
-    /**
-     * Returns a database query builder.
-     *
-     * @return \Doctrine\DBAL\Query\QueryBuilder;
-     */
-    public function getQuery()
-    {
-        return $this->conn->createQueryBuilder();
     }
 }
