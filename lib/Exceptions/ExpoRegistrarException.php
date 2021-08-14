@@ -15,6 +15,16 @@ class ExpoRegistrarException extends ExpoException
     }
 
     /**
+     * Invalid interest exception
+     *
+     * @return static
+     */
+    public static function invalidInterest()
+    {
+        return new static('The interest name must be a string.', 422);
+    }
+
+    /**
      * Register token exception
      *
      * @return static

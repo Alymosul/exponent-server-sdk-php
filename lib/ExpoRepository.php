@@ -11,7 +11,7 @@ interface ExpoRepository
      *
      * @return bool
      */
-    public function store($key, $value): bool;
+    public function store(string $key, string $value): bool;
 
     /**
      * Retrieve an Expo token with a given identifier

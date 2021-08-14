@@ -15,13 +15,8 @@ class ExpoFileDriver implements ExpoRepository
 
     /**
      * Stores an Expo token with a given identifier
-     *
-     * @param $key
-     * @param $value
-     *
-     * @return bool
      */
-    public function store($key, $value): bool
+    public function store(string $key, string $value): bool
     {
         $storageInstance = null;
 
@@ -57,8 +52,6 @@ class ExpoFileDriver implements ExpoRepository
     /**
      * Retrieves an Expo token with a given identifier
      *
-     * @param string $key
-     *
      * @return array|string|null
      */
     public function retrieve(string $key)
@@ -67,7 +60,7 @@ class ExpoFileDriver implements ExpoRepository
 
         $storageInstance = $this->getRepository();
 
-        $token = $storageInstance->{$key}?? null;
+        $token = $storageInstance->{$key} ?? null;
 
         return $token;
     }
@@ -91,6 +84,8 @@ class ExpoFileDriver implements ExpoRepository
         }
 
         // Delete a single token with this key and check if there are multiple tokens associated with this key
+        // @todo BUG count($storageInstance->{$key}) > 1 should be > 0, because we never check if $value is
+        // the only token subscribed before deleting the entire channel.
         if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 1)
         {
             // Find our token in list of tokens
@@ -100,6 +95,10 @@ class ExpoFileDriver implements ExpoRepository
                 // Remove single token from list
                 unset($storageInstance->{$key}[$index]);
 
+                // @todo The count could never be zero here. We check above to ensure
+                // the count is greater than 1, then only delete 1 token. So there
+                // has to be atleast 1 token still subscribed. Fixing the above todo
+                // will correct this.
                 if (count($storageInstance->{$key}) === 0) {
                     // No more tokens left, remove key
                     unset($storageInstance->{$key});

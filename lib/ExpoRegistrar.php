@@ -2,6 +2,8 @@
 namespace ExponentPhpSDK;
 
 use ExponentPhpSDK\Exceptions\ExpoRegistrarException;
+use ExponentPhpSDK\Repositories\ExpoDatabaseDriver;
+use ExponentPhpSDK\Repositories\ExpoFileDriver;
 
 class ExpoRegistrar
 {
@@ -15,11 +17,11 @@ class ExpoRegistrar
     /**
      * ExpoRegistrar constructor.
      *
-     * @param ExpoRepository $repository
+     * @param string $driver
      */
-    public function __construct(ExpoRepository $repository)
+    public function __construct(string $driver)
     {
-        $this->repository = $repository;
+        $this->repository = $this->getRepository($driver);
     }
 
     /**
@@ -34,6 +36,10 @@ class ExpoRegistrar
      */
     public function registerInterest($interest, $token)
     {
+        if (! is_string($interest)) {
+            throw ExpoRegistrarException::invalidInterest();
+        }
+
         if (! $this->isValidExpoPushToken($token)) {
             throw ExpoRegistrarException::invalidToken();
         }
@@ -59,6 +65,10 @@ class ExpoRegistrar
      */
     public function removeInterest($interest, $token = null)
     {
+        if (! is_string($interest)) {
+            throw ExpoRegistrarException::invalidInterest();
+        }
+
         if (!$this->repository->forget($interest, $token)) {
             throw ExpoRegistrarException::couldNotRemoveInterest();
         }
@@ -102,6 +112,16 @@ class ExpoRegistrar
         }
 
         return $tokens;
+    }
+
+    private function getRepository(string $driver)
+    {
+        switch ($driver) {
+            case 'file':
+                return new ExpoFileDriver();
+            case 'database':
+                return new ExpoDatabaseDriver();
+        }
     }
 
     /**

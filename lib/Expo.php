@@ -26,8 +26,8 @@ class Expo
      * @var ExpoRegistrar
      */
     private $registrar;
-    
-    /** 
+
+    /**
      * @var string|null
      */
     private $accessToken = null;
@@ -48,9 +48,13 @@ class Expo
      *
      * @return Expo
      */
-    public static function normalSetup()
+    public static function driver(string $driver)
     {
-        return new self(new ExpoRegistrar(new ExpoFileDriver()));
+        if (! in_array($driver, ['file', 'database'])) {
+            throw new ExpoException('Invalid storage driver');
+        }
+
+        return new self(new ExpoRegistrar($driver));
     }
 
     /**
@@ -78,7 +82,7 @@ class Expo
     {
         return $this->registrar->removeInterest($interest, $token);
     }
-    
+
     /**
      * @param string|null $accessToken
      */
@@ -109,6 +113,8 @@ class Expo
         // Gets the expo tokens for the interests
         $recipients = $this->registrar->getInterests($interests);
 
+        // @todo Should recipients be unique? As a recipient could
+        // be subscribed to multiple channels/interests.
         foreach ($recipients as $token) {
             $postData[] = $data + ['to' => $token];
         }
