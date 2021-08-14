@@ -26,5 +26,13 @@
         "psr-4": {
             "ExponentPhpSDK\\": "lib/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ExponentPhpSDK\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     }
 }

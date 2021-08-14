@@ -2,48 +2,27 @@
 
 namespace ExponentPhpSDK\Repositories;
 
-use Doctrine\DBAL\DriverManager;
+use ExponentPhpSDK\Database\Connection;
 use ExponentPhpSDK\Env;
+use ExponentPhpSDK\Exceptions\ExpoException;
 use ExponentPhpSDK\ExpoRepository;
 
 class ExpoDatabaseDriver implements ExpoRepository
 {
     private $env;
-    private $db;
+    private $conn;
 
-    public function __construct()
+    public function __construct(Connection $connection)
     {
         $this->env = new Env();
-        $this->db = $this->getConnction();
-    }
-
-    /**
-     * @return \Doctrine\DBAL\Connection
-     */
-    private function getConnction()
-    {
-        $credentials = [
-            'dbname' => $this->env->get('DB_DATABASE'),
-            'user' => $this->env->get('DB_USERNAME'),
-            'password' => $this->env->get('DB_PASSWORD'),
-            'host' => $this->env->get('DB_HOST'),
-            'port' => $this->env->get('DB_PORT'),
-            'driver' => 'pdo_mysql',
-        ];
-
-        return DriverManager::getConnection($credentials);
-    }
-
-    private function getQuery()
-    {
-        return $this->db->createQueryBuilder();
+        $this->conn = $connection->connect();
     }
 
     private function channelExists(string $channel)
     {
-        return (bool) $this->getQuery()
+        return (bool) $this->conn->getQuery()
             ->select('channel')
-            ->from('expo') // @todo custom table name
+            ->from($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
             ->fetchOne();
@@ -51,8 +30,8 @@ class ExpoDatabaseDriver implements ExpoRepository
 
     private function createChannel($channel)
     {
-        $this->getQuery()
-            ->insert('expo') // @todo custom table
+        $this->conn->getQuery()
+            ->insert($this->env->get('EXPO_TABLE'))
             ->values([
                 'channel' => ':channel',
                 'recipients' => ':recipients',
@@ -64,8 +43,8 @@ class ExpoDatabaseDriver implements ExpoRepository
 
     private function deleteChannel(string $channel): bool
     {
-        $this->getQuery()
-            ->delete('expo') // @todo custom table\
+        $this->conn->getQuery()
+            ->delete($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
             ->executeStatement();
@@ -76,14 +55,14 @@ class ExpoDatabaseDriver implements ExpoRepository
     private function getRecipients(string $channel): array
     {
         if (! $this->channelExists($channel)) {
-            throw new \Exception(
+            throw new ExpoException(
                 sprintf("Interest '%s' does not exist.", $channel)
             );
         }
 
-        $result = $this->getQuery()
+        $result = $this->conn->getQuery()
             ->select('recipients')
-            ->from('expo') // @todo custom table name
+            ->from($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
             ->fetchOne();
@@ -94,13 +73,13 @@ class ExpoDatabaseDriver implements ExpoRepository
     private function updateSubscriptions(string $channel, array $recipients): bool
     {
         if (! $this->channelExists($channel)) {
-            throw new \Exception(
+            throw new ExpoException(
                 sprintf("Interest '%s' does not exist.", $channel)
             );
         }
 
-        $this->getQuery()
-            ->update('expo') // @todo custom table
+        $this->conn->getQuery()
+            ->update($this->env->get('EXPO_TABLE'))
             ->set('recipients', ':recipients')
             ->where('channel = :channel')
             ->setParameter('recipients', json_encode($recipients))
