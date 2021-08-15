@@ -11,9 +11,9 @@ class ExpoRegistrar
     /**
      * The current registered driver.
      *
-     * @var string
+     * @var string|null
      */
-    private $driver;
+    private $driver = null;
 
     /**
      * Repository that manages the storage and retrieval
@@ -135,6 +135,12 @@ class ExpoRegistrar
         return  substr($token, 0, 18) ===  "ExponentPushToken[" && substr($token, -1) === ']';
     }
 
+    /**
+     * Returns a driver class given a driver key.
+     *
+     * @param string $driver
+     * @return ExpoRepository
+     */
     private function getRepository(string $driver)
     {
         switch ($driver) {
@@ -145,6 +151,11 @@ class ExpoRegistrar
         }
     }
 
+    /**
+     * Get the current registered driver.
+     *
+     * @return string|null
+     */
     public function getDriver()
     {
         return $this->driver;

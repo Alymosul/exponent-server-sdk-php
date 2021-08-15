@@ -9,7 +9,18 @@ use ExponentPhpSDK\ExpoRepository;
 
 class ExpoMysqlDriver implements ExpoRepository
 {
+    /**
+     * Access to environment variables.
+     *
+     * @var Env
+     */
     private $env;
+
+    /**
+     * The database connection.
+     *
+     * @var Connection
+     */
     private $conn;
 
     public function __construct(Connection $connection)
@@ -19,68 +30,74 @@ class ExpoMysqlDriver implements ExpoRepository
     }
 
     /**
-     * @param string $channel
-     * @param string $token
+     * Subscribes a token to the given channel.
      */
-    public function store($channel, $token): bool
+    public function store(string $channel, string $token): bool
     {
         if (! $this->channelExists($channel)) {
             $this->createChannel($channel);
         }
 
-        $recipients = $this->getRecipients($channel);
+        $tokens = $this->getTokens($channel);
 
         // prevents duplicate subscriptions to the same channel
-        if (! in_array($token, $recipients)) {
-            array_push($recipients, $token);
+        if (! in_array($token, $tokens)) {
+            array_push($tokens, $token);
         }
 
         return $this->updateSubscriptions(
             $channel,
-            $recipients
+            $tokens
         );
     }
 
     /**
+     * Retrieves a channels tokens.
+     *
      * @return array|null
      */
     public function retrieve(string $channel)
     {
-        $recipients = $this->getRecipients($channel);
+        $tokens = $this->getTokens($channel);
 
-        return count($recipients)
-            ? $recipients
+        return count($tokens)
+            ? $tokens
             : null;
     }
 
+    /**
+     * Removes a token from a channel.
+     */
     public function forget(string $channel, string $token = null): bool
     {
         if (! $this->channelExists($channel)) {
             return true;
         }
 
-        if (! $token && count($this->getRecipients($channel)) === 0) {
+        $tokens = $this->getTokens($channel);
+
+        if (! $token && count($tokens) === 0) {
             return $this->deleteChannel($channel);
         }
 
-        $recipients = $this->getRecipients($channel);
-
-        if (! in_array($token, $recipients)) {
+        if (! in_array($token, $tokens)) {
             return false;
         }
 
-        // @todo Can use array_search and unset once we prevent duplicate subscriptions to the same channel.
-        $filteredRecipients = array_filter($recipients, function($item) use ($token) {
+        $filteredTokens = array_filter($tokens, function($item) use ($token) {
             return $item !== $token;
         });
 
         // If there are no more subscribers delete the channel, otherwise update.
-        return count($filteredRecipients)
-            ? $this->updateSubscriptions($channel, array_values($filteredRecipients))
+        return count($filteredTokens)
+            ? $this->updateSubscriptions($channel, array_values($filteredTokens))
             : $this->deleteChannel($channel);
     }
 
-    private function channelExists(string $channel)
+    /**
+     * Checks if a given channel exists.
+     */
+    private function channelExists(string $channel): bool
     {
         return (bool) $this->conn->getQuery()
             ->select('channel')
@@ -90,7 +107,10 @@ class ExpoMysqlDriver implements ExpoRepository
             ->fetchOne();
     }
 
-    private function createChannel($channel)
+    /**
+     * Creates a channel.
+     */
+    private function createChannel($channel): void
     {
         $this->conn->getQuery()
             ->insert($this->env->get('EXPO_TABLE'))
@@ -103,6 +123,9 @@ class ExpoMysqlDriver implements ExpoRepository
             ->executeStatement();
     }
 
+    /**
+     * Deletes a channel.
+     */
     private function deleteChannel(string $channel): bool
     {
         $this->conn->getQuery()
@@ -114,7 +137,10 @@ class ExpoMysqlDriver implements ExpoRepository
         return true;
     }
 
-    private function getRecipients(string $channel): array
+    /**
+     * Gets tokens for a given channel.
+     */
+    private function getTokens(string $channel): array
     {
         if (! $this->channelExists($channel)) {
             throw new ExpoException(
@@ -122,17 +148,20 @@ class ExpoMysqlDriver implements ExpoRepository
             );
         }
 
-        $result = $this->conn->getQuery()
+        $tokens = $this->conn->getQuery()
             ->select('recipients')
             ->from($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
             ->fetchOne();
 
-        return $result ? json_decode($result) : [];
+        return $tokens ? json_decode($tokens) : [];
     }
 
-    private function updateSubscriptions(string $channel, array $recipients): bool
+    /**
+     * Updates a channels tokens.
+     */
+    private function updateSubscriptions(string $channel, array $tokens): bool
     {
         if (! $this->channelExists($channel)) {
             throw new ExpoException(
@@ -144,7 +173,7 @@ class ExpoMysqlDriver implements ExpoRepository
             ->update($this->env->get('EXPO_TABLE'))
             ->set('recipients', ':recipients')
             ->where('channel = :channel')
-            ->setParameter('recipients', json_encode($recipients))
+            ->setParameter('recipients', json_encode($tokens))
             ->setParameter('channel', $channel)
             ->executeStatement();
 

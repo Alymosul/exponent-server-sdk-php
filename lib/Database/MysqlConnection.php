@@ -30,7 +30,7 @@ class MysqlConnection implements Connection {
     /**
      * Establishes a database connection.
      *
-     * @return self
+     * @return MysqlConnection
      */
     public function connect()
     {
@@ -64,9 +64,10 @@ class MysqlConnection implements Connection {
     }
 
     /**
-     * Get the database credentials.
+     * Gets the database credentials from environment.
      *
      * @return array
+     * @throws \Exception
      */
     private function getCredentials()
     {

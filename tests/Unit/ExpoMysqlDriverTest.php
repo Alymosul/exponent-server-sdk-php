@@ -8,7 +8,7 @@ use ExponentPhpSDK\Expo;
 use ExponentPhpSDK\Repositories\ExpoMysqlDriver;
 use PHPUnit\Framework\TestCase;
 
-class MysqlDriverTest extends TestCase {
+class ExpoMysqlDriverTest extends TestCase {
 
     private $env;
     private $conn;

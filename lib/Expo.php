@@ -4,7 +4,6 @@ namespace ExponentPhpSDK;
 
 use ExponentPhpSDK\Exceptions\ExpoException;
 use ExponentPhpSDK\Exceptions\UnexpectedResponseException;
-use ExponentPhpSDK\Repositories\ExpoFileDriver;
 
 class Expo
 {
@@ -21,7 +20,7 @@ class Expo
     private $ch = null;
 
     /**
-     * The registrar instance that manages the tokens
+     * The registrar instance that manages the storage driver.
      *
      * @var ExpoRegistrar
      */
@@ -43,18 +42,27 @@ class Expo
     }
 
     /**
-     * Creates an instance of this class using ExpoFileDriver
-     * as the default repository.
+     * Creates an instance of this class using the given driver.
      *
      * @return Expo
      */
-    public static function driver(string $driver = 'file')
+    public static function driver(string $driver = null)
     {
         if (! in_array($driver, ['file', 'mysql'])) {
             throw new ExpoException('Invalid storage driver');
         }
 
         return new self(new ExpoRegistrar($driver));
+    }
+
+    /**
+     * Creates an instance of this class using the ExpoFileDriver.
+     *
+     * @return Expo
+     */
+    public static function normalSetup()
+    {
+        return self::driver('file');
     }
 
     /**

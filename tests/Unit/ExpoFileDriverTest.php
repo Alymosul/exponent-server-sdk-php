@@ -6,14 +6,14 @@ use ExponentPhpSDK\Expo;
 use ExponentPhpSDK\Repositories\ExpoFileDriver;
 use PHPUnit\Framework\TestCase;
 
-class FileDriverTest extends TestCase {
+class ExpoFileDriverTest extends TestCase {
 
     private $storagePath;
 
     protected function setUp(): void
     {
         $this->setUpTempStorage();
-        $this->driver = new ExpoFileDriver($this->storagePath);
+        $this->driver = new ExpoFileDriver();
     }
 
     public function setUpTempStorage()

@@ -7,7 +7,7 @@ interface Connection {
     /**
      * Gets a database connection.
      *
-     * @return self
+     * @return Connection
      */
     public function connect();
 

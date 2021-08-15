@@ -7,8 +7,6 @@ use ExponentPhpSDK\ExpoRepository;
 
 class ExpoFileDriver implements ExpoRepository
 {
-    private $env;
-
     /**
      * The file path for the file that will contain the registered tokens
      *
@@ -96,6 +94,7 @@ class ExpoFileDriver implements ExpoRepository
         }
 
         // Delete a single token with this key and check if there are multiple tokens associated with this key
+
         // @todo BUG count($storageInstance->{$key}) > 1 should be > 0, because we never check if $value is
         // the only token subscribed before deleting the entire channel.
         if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 1)
@@ -187,6 +186,7 @@ class ExpoFileDriver implements ExpoRepository
     public function setStorage(string $storage): self
     {
         $this->storage = $storage;
+
         return $this;
     }
 }
