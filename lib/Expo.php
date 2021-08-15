@@ -43,12 +43,12 @@ class Expo
     }
 
     /**
-     * Creates an instance of this class with the normal setup
-     * It uses the ExpoFileDriver as the repository.
+     * Creates an instance of this class using ExpoFileDriver
+     * as the default repository.
      *
      * @return Expo
      */
-    public static function driver(string $driver)
+    public static function driver(string $driver = 'file')
     {
         if (! in_array($driver, ['file', 'mysql'])) {
             throw new ExpoException('Invalid storage driver');

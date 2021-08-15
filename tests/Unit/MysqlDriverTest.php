@@ -22,6 +22,17 @@ class MysqlDriverTest extends TestCase {
         $this->table = $this->env->get('EXPO_TABLE');
     }
 
+    protected function tearDown(): void
+    {
+        // Delete all existing channels
+        $this->conn->getQuery()
+            ->delete($this->table)
+            ->executeQuery();
+
+        $this->conn->close();
+        $this->conn = null;
+    }
+
     public function testExpoInstantiates()
     {
         $expo = Expo::driver('mysql');
@@ -34,7 +45,7 @@ class MysqlDriverTest extends TestCase {
     /**
      * @depends testExpoInstantiates
      */
-    public function testExpoReturnsAMysqlDriver(Expo $expo)
+    public function testExpoReturnsMysqlDriver(Expo $expo)
     {
         $this->assertEquals('mysql', $expo->getDriver());
     }
@@ -42,10 +53,10 @@ class MysqlDriverTest extends TestCase {
     /**
      * @depends testExpoInstantiates
      */
-    public function testYouCanSubscribeToAChannel(Expo $expo)
+    public function testExpoCanSubscribeToAChannel(Expo $expo)
     {
-        $channel = 'events';
-        $token = 'ExponentPushToken[some-obscure-token]';
+        $channel = 'default';
+        $token = 'ExponentPushToken[token]';
         $expo->subscribe($channel, $token);
 
         $result = $this->conn->getQuery()
@@ -61,11 +72,11 @@ class MysqlDriverTest extends TestCase {
     /**
      * @depends testExpoInstantiates
      */
-    public function testYouCanUnsubscribeFromAChannel(Expo $expo)
+    public function testExpoCanUnsubscribeFromAChannel(Expo $expo)
     {
-        $channel = 'events';
-        $token1 = 'ExponentPushToken[some-obscure-token-1]';
-        $token2 = 'ExponentPushToken[some-obscure-token-2]';
+        $channel = 'default';
+        $token1 = 'ExponentPushToken[token-1]';
+        $token2 = 'ExponentPushToken[token-2]';
         $expo->subscribe($channel, $token1);
         $expo->subscribe($channel, $token2);
 
@@ -98,40 +109,14 @@ class MysqlDriverTest extends TestCase {
         );
     }
 
-    public function testTheMysqlDriverCanStoreTokens()
-    {
-        $channel = 'default';
-        $this->driver->store($channel, 'ExponentPushToken[some-obscure-token]');
-
-        $result = (bool) $this->conn->getQuery()
-            ->select('channel')
-            ->from($this->table)
-            ->where('channel = :channel')
-            ->setParameter('channel', $channel)
-            ->fetchOne();
-
-        $this->assertTrue($result);
-    }
-
-    public function testTheMysqlDriverCanRetrieveTokens()
-    {
-        $channel = 'default';
-        $token = 'ExponentPushToken[some-obscure-token]';
-        $this->driver->store($channel, $token);
-
-        $tokens = $this->driver->retrieve($channel);
-
-        $this->assertSame([$token], $tokens);
-    }
-
     /**
      * @depends testExpoInstantiates
      */
-    public function testTheMysqlDriverCanForgetAToken(Expo $expo)
+    public function testMysqlDriverCanForgetAToken(Expo $expo)
     {
         $channel = 'default';
-        $token1 = 'ExponentPushToken[some-obscure-token-1]';
-        $token2 = 'ExponentPushToken[some-obscure-token-2]';
+        $token1 = 'ExponentPushToken[token-1]';
+        $token2 = 'ExponentPushToken[token-2]';
         $expo->subscribe($channel, $token1);
         $expo->subscribe($channel, $token2);
 
@@ -164,13 +149,29 @@ class MysqlDriverTest extends TestCase {
         );
     }
 
-    protected function tearDown(): void
+    public function testMysqlDriverCanStoreTokens()
     {
-        // Delete all existing channels
-        $this->conn->getQuery()
-            ->delete($this->table)
-            ->executeQuery();
+        $channel = 'default';
+        $this->driver->store($channel, 'ExponentPushToken[token]');
 
-        $this->conn = null;
+        $result = (bool) $this->conn->getQuery()
+            ->select('channel')
+            ->from($this->table)
+            ->where('channel = :channel')
+            ->setParameter('channel', $channel)
+            ->fetchOne();
+
+        $this->assertTrue($result);
+    }
+
+    public function testMysqlDriverCanRetrieveTokens()
+    {
+        $channel = 'default';
+        $token = 'ExponentPushToken[token]';
+        $this->driver->store($channel, $token);
+
+        $tokens = $this->driver->retrieve($channel);
+
+        $this->assertSame([$token], $tokens);
     }
 }

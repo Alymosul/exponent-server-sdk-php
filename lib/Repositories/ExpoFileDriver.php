@@ -2,16 +2,28 @@
 
 namespace ExponentPhpSDK\Repositories;
 
+use ExponentPhpSDK\Env;
 use ExponentPhpSDK\ExpoRepository;
 
 class ExpoFileDriver implements ExpoRepository
 {
+    private $env;
+
     /**
      * The file path for the file that will contain the registered tokens
      *
      * @var string
      */
     private $storage = __DIR__.'/../../storage/tokens.json';
+
+    public function __construct()
+    {
+        $env = new ENV();
+
+        if ($env->getSafe('EXPO_STORAGE')) {
+            $this->storage = $env->get('EXPO_STORAGE');
+        }
+    }
 
     /**
      * Stores an Expo token with a given identifier
