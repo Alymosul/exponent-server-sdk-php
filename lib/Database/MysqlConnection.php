@@ -50,6 +50,7 @@ class MysqlConnection implements Connection {
      */
     public function close()
     {
+        $this->conn->close();
         $this->conn = null;
     }
 

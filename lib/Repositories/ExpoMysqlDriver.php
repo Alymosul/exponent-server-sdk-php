@@ -23,6 +23,11 @@ class ExpoMysqlDriver implements ExpoRepository
      */
     private $conn;
 
+    /**
+     * The ExpoMysqlDriver constructor.
+     *
+     * @param Connection $connection
+     */
     public function __construct(Connection $connection)
     {
         $this->env = new Env();
@@ -31,6 +36,10 @@ class ExpoMysqlDriver implements ExpoRepository
 
     /**
      * Subscribes a token to the given channel.
+     *
+     * @param string $channel
+     * @param string $token
+     * @return bool
      */
     public function store(string $channel, string $token): bool
     {
@@ -54,6 +63,7 @@ class ExpoMysqlDriver implements ExpoRepository
     /**
      * Retrieves a channels tokens.
      *
+     * @param string $channel
      * @return array|null
      */
     public function retrieve(string $channel)
@@ -67,6 +77,10 @@ class ExpoMysqlDriver implements ExpoRepository
 
     /**
      * Removes a token from a channel.
+     *
+     * @param string $channel
+     * @param string $token
+     * @return bool
      */
     public function forget(string $channel, string $token = null): bool
     {
@@ -96,6 +110,9 @@ class ExpoMysqlDriver implements ExpoRepository
 
     /**
      * Checks if a given channel exists.
+     *
+     * @param string $channel
+     * @return bool
      */
     private function channelExists(string $channel): bool
     {
@@ -104,13 +121,17 @@ class ExpoMysqlDriver implements ExpoRepository
             ->from($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
     }
 
     /**
      * Creates a channel.
+     *
+     * @param string $channel
+     * @return void
      */
-    private function createChannel($channel): void
+    private function createChannel(string $channel): void
     {
         $this->conn->getQuery()
             ->insert($this->env->get('EXPO_TABLE'))
@@ -120,11 +141,14 @@ class ExpoMysqlDriver implements ExpoRepository
             ])
             ->setParameter('channel', $channel)
             ->setParameter('recipients', '[]')
-            ->executeStatement();
+            ->execute();
     }
 
     /**
      * Deletes a channel.
+     *
+     * @param string $channel
+     * @return bool
      */
     private function deleteChannel(string $channel): bool
     {
@@ -132,13 +156,16 @@ class ExpoMysqlDriver implements ExpoRepository
             ->delete($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
-            ->executeStatement();
+            ->execute();
 
         return true;
     }
 
     /**
      * Gets tokens for a given channel.
+     *
+     * @param string $channel
+     * @return array
      */
     private function getTokens(string $channel): array
     {
@@ -153,6 +180,7 @@ class ExpoMysqlDriver implements ExpoRepository
             ->from($this->env->get('EXPO_TABLE'))
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         return $tokens ? json_decode($tokens) : [];
@@ -160,6 +188,10 @@ class ExpoMysqlDriver implements ExpoRepository
 
     /**
      * Updates a channels tokens.
+     *
+     * @param string $channel
+     * @param array $tokens
+     * @return bool
      */
     private function updateSubscriptions(string $channel, array $tokens): bool
     {
@@ -175,7 +207,7 @@ class ExpoMysqlDriver implements ExpoRepository
             ->where('channel = :channel')
             ->setParameter('recipients', json_encode($tokens))
             ->setParameter('channel', $channel)
-            ->executeStatement();
+            ->execute();
 
         return true;
     }

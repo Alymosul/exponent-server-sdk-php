@@ -4,7 +4,6 @@ namespace ExponentPhpSDK\Tests\Unit;
 
 use ExponentPhpSDK\Expo;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 class ExpoTest extends TestCase {
 

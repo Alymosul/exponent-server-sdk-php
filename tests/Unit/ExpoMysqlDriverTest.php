@@ -27,7 +27,7 @@ class ExpoMysqlDriverTest extends TestCase {
         // Delete all existing channels
         $this->conn->getQuery()
             ->delete($this->table)
-            ->executeQuery();
+            ->execute();
 
         $this->conn->close();
         $this->conn = null;
@@ -64,6 +64,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         $this->assertSame([$token], json_decode($result));
@@ -85,6 +86,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         // two tokens subscribed
@@ -100,6 +102,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         // one token subscribed
@@ -125,6 +128,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         // two tokens subscribed
@@ -140,6 +144,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         // one token subscribed
@@ -159,6 +164,7 @@ class ExpoMysqlDriverTest extends TestCase {
             ->from($this->table)
             ->where('channel = :channel')
             ->setParameter('channel', $channel)
+            ->execute()
             ->fetchOne();
 
         $this->assertTrue($result);
