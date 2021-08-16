@@ -5,32 +5,30 @@ namespace ExponentPhpSDK;
 class Env {
 
     /**
-     * Retrieves an environment value.
+     * Retrieves an environment variable.
      *
      * @return string
-     * @throws \Exception
      */
-    public function get($key)
+    public function get(string $key)
     {
+        $value = $_ENV[$key] ?? null;
+
         // Allows for a custom table name for databse drivers.
         if ($key === 'EXPO_TABLE') {
-            return $this->getSafe($key) ?? 'expo_tokens';
+            return $value ?? 'expo_tokens';
         }
 
-        return $_ENV[$key];
+        return $value;
     }
 
     /**
-     * Retrieves an environment value if it exists, null otherwise.
+     * Determine if an environment variable exists.
      *
-     * @return string|null
+     * @param string $key
+     * @return bool
      */
-    public function getSafe($key)
+    public function has(string $key)
     {
-        try {
-            return $_ENV[$key];
-        } catch (\Throwable $e) {
-            return null;
-        }
+        return (bool) $this->get($key);
     }
 }

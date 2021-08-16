@@ -3,6 +3,7 @@
 namespace ExponentPhpSDK\Tests\Unit;
 
 use ExponentPhpSDK\Expo;
+use ExponentPhpSDK\Env;
 use PHPUnit\Framework\TestCase;
 
 class ExpoTest extends TestCase {
@@ -21,5 +22,15 @@ class ExpoTest extends TestCase {
         $expo = Expo::normalSetup();
 
         $this->assertEquals('file', $expo->getDriver());
+    }
+
+    public function testCustomDatabaseTableNameOverridesDefault()
+    {
+        $env = new Env();
+
+        $this->assertNotEquals(
+            $env->get('EXPO_TABLE'),
+            'expo_tokens'
+        );
     }
 }

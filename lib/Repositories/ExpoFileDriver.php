@@ -18,7 +18,7 @@ class ExpoFileDriver implements ExpoRepository
     {
         $env = new Env();
 
-        if ($env->getSafe('EXPO_STORAGE')) {
+        if ($env->has('EXPO_STORAGE')) {
             $this->storage = $env->get('EXPO_STORAGE');
         }
     }
