@@ -2,15 +2,7 @@
 
 namespace ExponentPhpSDK;
 
-use Dotenv\Dotenv;
-
 class Env {
-
-    public function __construct()
-    {
-        $dotenv = Dotenv::createImmutable(getcwd());
-        $dotenv->safeLoad();
-    }
 
     /**
      * Retrieves an environment value.

@@ -24,7 +24,7 @@ class ExpoMysqlDriver implements ExpoRepository
     private $conn;
 
     /**
-     * The ExpoMysqlDriver constructor.
+     * ExpoMysqlDriver constructor.
      *
      * @param Connection $connection
      */

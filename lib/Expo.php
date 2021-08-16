@@ -42,7 +42,7 @@ class Expo
     }
 
     /**
-     * Creates an instance of this class using the given driver.
+     * Creates an Expo instance using the given driver.
      *
      * @return Expo
      */
