@@ -11,7 +11,7 @@ class Env {
      */
     public function get(string $key)
     {
-        $value = $_ENV[$key] ?? null;
+        $value = $_SERVER[$key] ?? null;
 
         // Allows for a custom table name for databse drivers.
         if ($key === 'EXPO_TABLE') {
