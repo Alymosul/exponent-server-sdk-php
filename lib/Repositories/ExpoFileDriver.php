@@ -16,11 +16,7 @@ class ExpoFileDriver implements ExpoRepository
 
     public function __construct()
     {
-        $env = new Env();
-
-        if ($env->has('EXPO_STORAGE')) {
-            $this->storage = $env->get('EXPO_STORAGE');
-        }
+        $this->setCustomStorage();
     }
 
     /**
@@ -33,7 +29,7 @@ class ExpoFileDriver implements ExpoRepository
         try {
             $storageInstance = $this->getRepository();
         } catch (\Exception $e) {
-            // Create the file, if it does not exist..
+            // Create the default file, if it does not exist..
             $storageInstance = $this->createFile();
         }
 
@@ -93,10 +89,10 @@ class ExpoFileDriver implements ExpoRepository
             return false;
         }
 
-        // Delete a single token with this key and check if there are multiple tokens associated with this key
-
         // @todo BUG count($storageInstance->{$key}) > 1 should be > 0, because we never check if $value is
         // the only token subscribed before deleting the entire channel.
+
+        // Delete a single token with this key and check if there are multiple tokens associated with this key
         if($value && isset($storageInstance->{$key}) && is_array($storageInstance->{$key}) && count($storageInstance->{$key}) > 1)
         {
             // Find our token in list of tokens
@@ -148,6 +144,7 @@ class ExpoFileDriver implements ExpoRepository
         }
 
         $file = file_get_contents($this->storage);
+
         return json_decode($file);
     }
 
@@ -161,6 +158,7 @@ class ExpoFileDriver implements ExpoRepository
     private function updateRepository($contents)
     {
         $record = json_encode($contents);
+
         return file_put_contents($this->storage, $record);
     }
 
@@ -174,6 +172,7 @@ class ExpoFileDriver implements ExpoRepository
         $file = fopen($this->storage, "w");
         fputs($file, '{}');
         fclose($file);
+
         return json_decode('{}');
     }
 
@@ -188,5 +187,36 @@ class ExpoFileDriver implements ExpoRepository
         $this->storage = $storage;
 
         return $this;
+    }
+
+    /**
+     * Allows for custom token storage path from environment
+     *
+     * @return void
+     * @throws \Exception
+     */
+    private function setCustomStorage(): void
+    {
+        $path = (new Env())->get('EXPO_STORAGE');
+
+        if (! $path) {
+            return;
+        }
+
+        if (! file_exists($path)) {
+            throw new \Exception(
+                sprintf("Tokens storage file not found: %s.", $path)
+            );
+        }
+
+        $this->storage = $path;
+
+        // ensures the tokens file contains an object
+        $contents = $this->getRepository();
+
+        if (gettype($contents) !== "object") {
+            $this->updateRepository(new \stdClass);
+        }
+
     }
 }

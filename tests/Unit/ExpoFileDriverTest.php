@@ -2,6 +2,7 @@
 
 namespace ExponentPhpSDK\Tests\Unit;
 
+use ExponentPhpSDK\Env;
 use ExponentPhpSDK\Expo;
 use ExponentPhpSDK\Repositories\ExpoFileDriver;
 use PHPUnit\Framework\TestCase;
@@ -12,25 +13,14 @@ class ExpoFileDriverTest extends TestCase {
 
     protected function setUp(): void
     {
-        $this->setUpTempStorage();
         $this->driver = new ExpoFileDriver();
-    }
-
-    public function setUpTempStorage()
-    {
-        $this->tempDir = TEST_DIR . DIRECTORY_SEPARATOR . '.tmp';
-
-        if (! is_dir($this->tempDir)) {
-            mkdir($this->tempDir);
-        }
-
-        $this->storagePath = $this->tempDir . DIRECTORY_SEPARATOR . 'tokens.json';
+        $this->storagePath = (new Env())->get('EXPO_STORAGE');
     }
 
     protected function tearDown(): void
     {
-        @unlink($this->storagePath);
-        @rmdir($this->tempDir);
+        $empty = json_encode(new \stdClass());
+        file_put_contents($this->storagePath, $empty);
     }
 
     private function getStorageArray()
