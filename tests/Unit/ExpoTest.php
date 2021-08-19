@@ -8,7 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class ExpoTest extends TestCase {
 
-    public function testExpoInstantiates()
+    /** @test */
+    public function expo_instantiates()
     {
         $expo = Expo::normalSetup();
 
@@ -17,14 +18,16 @@ class ExpoTest extends TestCase {
         return $expo;
     }
 
-    public function testNormalSetupReturnsFileDriver()
+    /** @test */
+    public function normal_setup_returns_a_file_driver()
     {
         $expo = Expo::normalSetup();
 
         $this->assertEquals('file', $expo->getDriver());
     }
 
-    public function testCustomDatabaseTableNameOverridesDefault()
+    /** @test */
+    public function custom_database_table_name_overrides_default()
     {
         $env = new Env();
 

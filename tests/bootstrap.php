@@ -1,8 +1,8 @@
 <?php
 
-use Dotenv\Dotenv;
-
 require __DIR__.'/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
 
 define('TEST_DIR', __DIR__ );
 
