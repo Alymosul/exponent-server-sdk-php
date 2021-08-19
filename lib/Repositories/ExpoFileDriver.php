@@ -50,9 +50,7 @@ class ExpoFileDriver implements ExpoRepository
             $storageInstance->{$key} = [$value];
         }
 
-        $file = $this->updateRepository($storageInstance);
-
-        return (bool) $file;
+        return $this->updateRepository($storageInstance);
     }
 
     /**
@@ -131,6 +129,26 @@ class ExpoFileDriver implements ExpoRepository
     }
 
     /**
+     * Removes all Expo tokens with a given identifier
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function forgetAll(string $key): bool
+    {
+        try {
+            $contents = $this->getRepository();
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        unset($contents->{$key});
+
+        return $this->updateRepository($contents);
+    }
+
+    /**
      * Gets the storage file contents and converts it into an object
      *
      * @return object
@@ -153,13 +171,13 @@ class ExpoFileDriver implements ExpoRepository
      *
      * @param $contents
      *
-     * @return bool|int
+     * @return bool
      */
     private function updateRepository($contents)
     {
         $record = json_encode($contents);
 
-        return file_put_contents($this->storage, $record);
+        return (bool) file_put_contents($this->storage, $record);
     }
 
     /**
@@ -190,7 +208,7 @@ class ExpoFileDriver implements ExpoRepository
     }
 
     /**
-     * Allows for custom token storage path from environment
+     * Sets the local storage file path from environment
      *
      * @return void
      * @throws \Exception

@@ -33,7 +33,8 @@ class ExpoMysqlDriverTest extends TestCase {
         $this->conn = null;
     }
 
-    public function testExpoInstantiates()
+    /** @test */
+    public function expo_instantiates()
     {
         $expo = Expo::driver('mysql');
 
@@ -43,17 +44,19 @@ class ExpoMysqlDriverTest extends TestCase {
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoReturnsMysqlDriver(Expo $expo)
+    public function expo_returns_mysql_driver(Expo $expo)
     {
         $this->assertEquals('mysql', $expo->getDriver());
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoCanSubscribeToAChannel(Expo $expo)
+    public function expo_can_subscribe_to_a_channel(Expo $expo)
     {
         $channel = 'default';
         $token = 'ExponentPushToken[token]';
@@ -71,9 +74,10 @@ class ExpoMysqlDriverTest extends TestCase {
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoCanUnsubscribeFromAChannel(Expo $expo)
+    public function expo_can_unsubscribe_a_single_token_from_a_channel(Expo $expo)
     {
         $channel = 'default';
         $token1 = 'ExponentPushToken[token-1]';
@@ -113,9 +117,50 @@ class ExpoMysqlDriverTest extends TestCase {
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testMysqlDriverCanForgetAToken(Expo $expo)
+    public function expo_can_unsubscribe_all_tokens_from_a_channel(Expo $expo)
+    {
+        $channel = 'default';
+        $token1 = 'ExponentPushToken[token-1]';
+        $token2 = 'ExponentPushToken[token-2]';
+        $expo->subscribe($channel, $token1);
+        $expo->subscribe($channel, $token2);
+
+        $subscriptions = $this->conn->getQuery()
+            ->select('recipients')
+            ->from($this->table)
+            ->where('channel = :channel')
+            ->setParameter('channel', $channel)
+            ->execute()
+            ->fetchOne();
+
+        // two tokens subscribed
+        $this->assertSame(
+            [$token1, $token2],
+            json_decode($subscriptions)
+        );
+
+        $expo->unsubscribeAll($channel);
+
+        $channel = $this->conn->getQuery()
+            ->select('channel')
+            ->from($this->table)
+            ->where('channel = :channel')
+            ->setParameter('channel', $channel)
+            ->execute()
+            ->fetchOne();
+
+        // channel is deleted
+        $this->assertSame(false, $channel);
+    }
+
+    /**
+     * @depends expo_instantiates
+     * @test
+     */
+    public function mysql_driver_can_forget_a_token(Expo $expo)
     {
         $channel = 'default';
         $token1 = 'ExponentPushToken[token-1]';
@@ -154,7 +199,8 @@ class ExpoMysqlDriverTest extends TestCase {
         );
     }
 
-    public function testMysqlDriverCanStoreTokens()
+    /** @test */
+    public function mysql_driver_can_store_tokens()
     {
         $channel = 'default';
         $this->driver->store($channel, 'ExponentPushToken[token]');
@@ -170,7 +216,8 @@ class ExpoMysqlDriverTest extends TestCase {
         $this->assertTrue($result);
     }
 
-    public function testMysqlDriverCanRetrieveTokens()
+    /** @test */
+    public function mysql_driver_can_retrieve_tokens()
     {
         $channel = 'default';
         $token = 'ExponentPushToken[token]';

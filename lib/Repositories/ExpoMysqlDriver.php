@@ -109,6 +109,17 @@ class ExpoMysqlDriver implements ExpoRepository
     }
 
     /**
+     * Removes all tokens from a channel.
+     *
+     * @param string $channel
+     * @return bool
+     */
+    public function forgetAll(string $channel): bool
+    {
+        return $this->deleteChannel($channel);
+    }
+
+    /**
      * Checks if a given channel exists.
      *
      * @param string $channel

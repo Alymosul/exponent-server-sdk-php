@@ -31,4 +31,13 @@ interface ExpoRepository
      * @return bool
      */
     public function forget(string $key, string $value = null): bool;
+
+    /**
+     * Removes all Expo tokens with a given identifier
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function forgetAll(string $key): bool;
 }

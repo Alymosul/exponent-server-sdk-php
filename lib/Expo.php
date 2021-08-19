@@ -100,6 +100,19 @@ class Expo
     }
 
     /**
+     * Unsubscribes all interests from the Expo Push Notifications.
+     *
+     * @param $interest
+     * @param $token
+     *
+     * @return bool
+     */
+    public function unsubscribeAll($interest)
+    {
+        return $this->registrar->removeAllInterest($interest);
+    }
+
+    /**
      * @param string|null $accessToken
      */
     public function setAccessToken(string $accessToken = null) {

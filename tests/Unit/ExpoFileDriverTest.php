@@ -30,7 +30,8 @@ class ExpoFileDriverTest extends TestCase {
         return json_decode($file, true);
     }
 
-    public function testExpoInstantiates()
+    /** @test */
+    public function expo_instantiates()
     {
         $expo = Expo::driver('file');
 
@@ -40,17 +41,19 @@ class ExpoFileDriverTest extends TestCase {
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoReturnsFileDriver(Expo $expo)
+    public function expo_returns_a_file_driver(Expo $expo)
     {
         $this->assertEquals('file', $expo->getDriver());
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoCanSubscribeToAChannel(Expo $expo)
+    public function expo_can_subscribe_to_a_channel(Expo $expo)
     {
         $channel = 'default';
         $token = 'ExponentPushToken[token]';
@@ -62,9 +65,10 @@ class ExpoFileDriverTest extends TestCase {
     }
 
     /**
-     * @depends testExpoInstantiates
+     * @depends expo_instantiates
+     * @test
      */
-    public function testExpoCanUnsubscribeFromAChannel(Expo $expo)
+    public function expo_can_unsubscribe_a_single_token_from_a_channel(Expo $expo)
     {
         $channel = 'default';
         $token1 = 'ExponentPushToken[token-1]';
@@ -89,5 +93,32 @@ class ExpoFileDriverTest extends TestCase {
             [$token2],
             $storage[$channel]
         );
+    }
+
+    /**
+     * @depends expo_instantiates
+     * @test
+     */
+    public function expo_can_unsubscribe_all_tokens_from_a_channel(Expo $expo)
+    {
+        $channel = 'default';
+        $token1 = 'ExponentPushToken[token-1]';
+        $token2 = 'ExponentPushToken[token-2]';
+        $expo->subscribe($channel, $token1);
+        $expo->subscribe($channel, $token2);
+
+        $storage = $this->getStorageArray();
+
+        // two tokens subscribed
+        $this->assertSame(
+            [$token1, $token2],
+            $storage[$channel]
+        );
+
+        $expo->unsubscribeAll($channel);
+        $storage = $this->getStorageArray();
+
+        // no tokens subscribed
+        $this->assertSame([], $storage);
     }
 }
