@@ -139,7 +139,7 @@ class ExpoFileDriver implements ExpoRepository
 
         $file = file_get_contents($this->storage);
 
-        // It guarantees that it will not have an unexpected value in the file's contents. Ex: null
+        // Ensures that it will not have an unexpected value in the contents of the tokens.json file. Ex: null
         $json = json_decode($file);
 
         if (gettype($json) != 'object') {
