@@ -115,7 +115,7 @@ class Expo
 
         $ch = $this->prepareCurl();
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData, JSON_UNESCAPED_UNICODE));
 
         $response = $this->executeCurl($ch);
 
